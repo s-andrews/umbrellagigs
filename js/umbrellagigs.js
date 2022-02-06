@@ -1,5 +1,7 @@
 const backend = "cgi-bin/umbrella_backend.py"
 var session = ""
+var is_admin = false
+var name = ""
 
 $( document ).ready(function() {
     show_login()
@@ -12,33 +14,38 @@ function show_login() {
 
     // Check to see if there's a valid session ID we can use
 
-    session_id = Cookies.get("imagetrack_session_id")
-    if (session_id) {
+    session = Cookies.get("umbrella_session_id")
+    if (session) {
         // Validate the ID
         $.ajax(
             {
                 url: backend,
                 method: "POST",
                 data: {
-                    action: "session_login",
-                    session_id: session_id,
+                    action: "validate_session",
+                    session: session,
                 },
                 success: function(session_string) {
-                    let sections = session_string.split("\t")
-                    if (sections.length < 2) {
-                        session_id = ""
-                        $("#logindiv").modal("show")
+                    if (!session_string.startsWith("Success:")) {
+                        // Login failed
+                        Cookies.remove("umbrella_session_id")
+                        show_login()
                         return
                     }
-                    var realname = sections[0]
+                    let sections = session_string.split("\t")
+                    name = sections[0]
+                    is_admin = sections[1] == "True"
+                    // TODO: Make isadmin class visible
+                    $("#logindiv").modal("hide")
                     $("#maincontent").show()
     
                     // Get their list of submissions
-                    populate_submissions(undefined)
+                    update_gigs()
                 },
                 error: function(message) {
                     console.log("Existing session didn't validate")
-                    $("#logindiv").modal("show")
+                    Cookies.remove("umbrella_session_id")
+                    show_login()
                 }
             }
         )
@@ -50,7 +57,7 @@ function show_login() {
 
 function logout() {
     session_id = ""
-    Cookies.remove("sierra_session_id")
+    Cookies.remove("umbrella_session_id")
     $("#submissions").html("")
     $("#maincontent").hide()
     $("#logindiv").modal("show")
@@ -79,13 +86,8 @@ function process_login() {
                 $("#loginerror").hide()
                 session = sections[1]
 
-                // Cookies.set("sierra_session_id", session_id)
-                $("#logindiv").modal("hide")
-                $("#maincontent").show()
-                update_projects()
-
-                // Get their list of submissions
-                // populate_submissions(undefined)
+                Cookies.set("umbrella_session_id", session)
+                show_login()
             },
             error: function(message) {
                 $("#loginerror").html("Login Failed")
@@ -95,14 +97,14 @@ function process_login() {
     )
 }
 
-function update_projects(){
+function update_gigs(){
 
     $.ajax(
         {
             url: backend,
             method: "POST",
             data: {
-                action: "list_projects",
+                action: "list_gigs",
                 session: session
             },
             success: function(projects) {
@@ -125,7 +127,7 @@ function update_projects(){
 
             },
             error: function(message) {
-                $("#projectbody").clear()
+                $("#gigtablebody").clear()
             }
         }
     )

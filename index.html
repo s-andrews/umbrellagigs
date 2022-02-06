@@ -18,7 +18,15 @@
   </head>
   <body>
     <div id="maincontent" class="container">
-        <table id="projecttable" class="table table-striped" style="width:100%">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Gigs</a>
+        </li>
+        <li class="nav-item adminonly">
+          <a class="nav-link" href="#">People</a>
+        </li>
+      </ul>
+        <table id="gigtable" class="table table-striped" style="width:100%">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -28,7 +36,8 @@
                     <th>Answer</th>
                 </tr>
             </thead>
-            <tbody id="projecttbody">
+            <tbody id="gigtablebody">
+              <tr><td colspan="5">No gigs to show</td></tr>
             </tbody>
         </table>
     </div>
@@ -63,9 +72,6 @@
     <!-- JQuery which we're still using even if bootstrap doesn't need it any more -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
  
-    <!-- Data Tables -->
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
     <!-- JSCookie -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script>
 

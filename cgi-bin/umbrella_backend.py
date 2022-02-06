@@ -27,6 +27,9 @@ def main():
     if form["action"].value == "login":
         process_login(form["email"].value,form["password"].value)
 
+    elif form["action"].value == "validate_session":
+        validate_session(form["session"].value)
+
     else:
         # Everything else needs validation so let's check that first
         person = checksession(form["session"].value)
@@ -86,6 +89,14 @@ def process_login (email,password):
     else:
         send_response(False,"Incorrect login")
 
+def validate_session(sessioncode):
+    person = checksession(sessioncode)
+
+    if person is None:
+        send_response(False,"")
+        return
+    
+    send_response(True,person["first_name"]+" "+person["last_name"]+"\t"+str(person["is_admin"]))
 
 def checksession (sessioncode):
     person = people.find_one({"sessioncode":sessioncode})

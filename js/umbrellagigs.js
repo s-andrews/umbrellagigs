@@ -107,21 +107,23 @@ function update_gigs(){
                 action: "list_gigs",
                 session: session
             },
-            success: function(projects) {
-                $("#projectbody").empty()
+            success: function(gigs) {
+                $("#gigtablebody").empty()
 
-                let t = $('#projecttable').DataTable();
+                let t = $('#gigtable')
 
-                for (let p in projects) {
-                    let project = projects[p]
-                    console.log(project)
-                    t.row.add([
-                        project["name"],
-                        project["date"],
-                        project["instrument"],
-                        project["modality"],
-                        "Folder"
-                    ]).draw(false)
+                for (let g in gigs) {
+                    let gig = gigs[g]
+
+                    t.append(`
+                        <tr class="${gig.confirmed}">
+                            <td>${gig.date}</td>
+                            <td>${gig.name}</td>
+                            <td>${gig.location}</td>
+                            <td>${gig.start_time} - ${gig.end_time}</td>
+                            <td>Unknown</td>
+                        </tr>
+                    `)
                 }
 
 

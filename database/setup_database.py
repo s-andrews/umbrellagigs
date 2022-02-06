@@ -42,5 +42,32 @@ def main():
         people.update_one({"email":email},{"$set": {"is_admin": True}})
 
 
+
+    # Add some 
+    # Make up a list of the regulars
+    regular_search = people.find({"is_dep":False})
+
+    regulars = []
+
+    for regular in regular_search:
+        regular["response"] = "No response"
+        regulars.append(regular)
+        
+    with open("gigs.txt") as fh:
+        for line in fh:
+            sections=line.split("\t")
+            gig = {
+                "date": sections[0],
+                "start_time": sections[1],
+                "end_time": sections[2],
+                "name": sections[3],
+                "location": sections[4],
+                "confirmed": sections[5] == "True",
+                "players" : regulars
+            }
+
+            gigs.insert_one(gig)
+
+
 if __name__ == "__main__":
     main()

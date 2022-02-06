@@ -111,15 +111,23 @@ def new_gig(person,form):
     """
     Creates a new event and puts it into the database
     """
+    # Make up a list of the regulars
+    regular_search = people.find({"is_dep":False})
 
-    # TODO: populate with people
+    regulars = []
+
+    for regular in regular_search:
+        regular["response"] = "No response"
+        regulars.append(regular)
+        
     gig = {
-        "person_id": person["_id"],
-        "date": form["name"].value,
+        "date": form["date"].value,
         "start_time": form["start_time"].value,
         "end_time": form["end_time"].value,
+        "name": form["name"].value,
         "location": form["location"].value,
-        "players": {}
+        "confirmed": form["confirmed"].value == "True",
+        "players" : regulars
     }
 
     gigs.insert_one(gig)

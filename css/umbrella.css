@@ -10,3 +10,36 @@
     margin-top: 0.2em;
     display: none;
 }
+
+#loginname {
+    padding-right: 1em;
+    font-weight: bold;
+}
+.adminonly {
+    display: none
+}
+
+.unconfirmed {
+    background-color: grey;
+    color: white;
+}
+
+.confirmed {
+    background-color: green;
+    color: white;
+}
+
+td {
+    padding: 0.5em;
+}
+
+thead {
+    background-color: black;
+    color: white;
+}
+
+tr:hover {
+    background-color: darkmagenta;
+    cursor: pointer;
+}
+

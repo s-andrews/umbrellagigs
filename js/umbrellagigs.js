@@ -8,6 +8,8 @@ $( document ).ready(function() {
 
     // Action when they log in
     $("#login").click(process_login)
+
+    $("#logoutbutton").click(logout)
 })
 
 function show_login() {
@@ -33,7 +35,8 @@ function show_login() {
                         return
                     }
                     let sections = session_string.split("\t")
-                    name = sections[0]
+                    name = sections[0].substring(9)
+                    $("#loginname").text(name)
                     is_admin = sections[1] == "True"
                     // TODO: Make isadmin class visible
                     $("#logindiv").modal("hide")
@@ -58,7 +61,7 @@ function show_login() {
 function logout() {
     session_id = ""
     Cookies.remove("umbrella_session_id")
-    $("#submissions").html("")
+    $("#gigtablebody").empty()
     $("#maincontent").hide()
     $("#logindiv").modal("show")
 }
@@ -108,15 +111,20 @@ function update_gigs(){
                 session: session
             },
             success: function(gigs) {
+
+                console.log(gigs)
+
                 $("#gigtablebody").empty()
 
-                let t = $('#gigtable')
+                let t = $('#gigtablebody')
 
                 for (let g in gigs) {
                     let gig = gigs[g]
 
+                    let confirmed = gig.confirmed ? "confirmed" : "unconfirmed"
+
                     t.append(`
-                        <tr class="${gig.confirmed}">
+                        <tr class="${confirmed}">
                             <td>${gig.date}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
@@ -129,7 +137,7 @@ function update_gigs(){
 
             },
             error: function(message) {
-                $("#gigtablebody").clear()
+                $("#gigtablebody").empty()
             }
         }
     )

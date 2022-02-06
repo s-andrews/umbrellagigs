@@ -20,7 +20,7 @@ def main():
     # Create users
     with open("players.txt") as fh:
         for line in fh:
-            sections=line.split("\t")
+            sections=line.strip().split("\t")
             player = {
                 "first_name": sections[0],
                 "last_name": sections[1],
@@ -55,7 +55,7 @@ def main():
         
     with open("gigs.txt") as fh:
         for line in fh:
-            sections=line.split("\t")
+            sections=line.strip().split("\t")
             gig = {
                 "date": sections[0],
                 "start_time": sections[1],

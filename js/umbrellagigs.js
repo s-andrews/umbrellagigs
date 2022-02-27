@@ -9,8 +9,49 @@ $( document ).ready(function() {
     // Action when they log in
     $("#login").click(process_login)
 
+    // Action when they log out
     $("#logoutbutton").click(logout)
+
+    // Action when they answer about a gig
+    $("#submitanswer").click(submit_answer)
 })
+
+function submit_answer() {
+    let oid = $("submitanswer").data("oid")
+    let answer = $('input[name=giganswerradio]:checked')
+
+    if (answer.length == 0) {
+        // They haven't answered
+        return
+    }
+
+    answer = $("label[for='" + answer.attr('id') + "']").text().trim()
+    
+    // We report the change in status to the backend
+    $.ajax(
+        {
+            url: backend,
+            method: "POST",
+            data: {
+                action: "answer_gig",
+                session: session,
+                gig_id: oid,
+                answer: answer
+            },
+            success: function(gigs) {
+                update_gigs()
+            },
+            error: function(message) {
+                console.log("Failed to update gig answer")
+                $("#gigtablebody").empty()
+            }
+        }
+    )
+
+    $("#answerdiv").modal("hide")
+
+}
+
 
 function show_login() {
 
@@ -112,8 +153,6 @@ function update_gigs(){
             },
             success: function(gigs) {
 
-                console.log(gigs)
-
                 $("#gigtablebody").empty()
 
                 let t = $('#gigtablebody')
@@ -133,8 +172,6 @@ function update_gigs(){
                 }
                 $("tr.gig").unbind()
                 $("tr.gig").click(function(){
-                    console.log($(this).data("oid"))
-                    console.log($(this).find("td").eq(4).text())
                     ask_about_gig($(this).data("oid"),$(this).find("td").eq(4).text())
                 })
 
@@ -152,7 +189,7 @@ function ask_about_gig(oid, current_answer) {
     let al = $("#answerlist")
     al.empty(); 
 
-    ["Unavailable","Maybe","Available"].forEach(
+    ["Available","Maybe","Unavailable"].forEach(
         answer => {
             let selected = ""
             if (answer == current_answer) {

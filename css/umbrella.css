@@ -29,6 +29,11 @@
     color: white;
 }
 
+.cancelled {
+    background-color: darkred;
+    color: white;
+}
+
 td {
     padding: 0.5em;
 }
@@ -38,7 +43,7 @@ thead {
     color: white;
 }
 
-tr:hover {
+tr.gig:hover {
     background-color: darkmagenta;
     cursor: pointer;
 }

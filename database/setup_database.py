@@ -62,7 +62,7 @@ def main():
                 "end_time": sections[2],
                 "name": sections[3],
                 "location": sections[4],
-                "confirmed": sections[5] == "True",
+                "confirmed": sections[5],
                 "players" : regulars
             }
 

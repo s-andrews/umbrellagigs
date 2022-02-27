@@ -121,10 +121,8 @@ function update_gigs(){
                 for (let g in gigs) {
                     let gig = gigs[g]
 
-                    let confirmed = gig.confirmed ? "confirmed" : "unconfirmed"
-
                     t.append(`
-                        <tr class="${confirmed}">
+                        <tr class="gig ${gig.confirmed}" data-oid="${gig._id.$oid}">
                             <td>${gig.date}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
@@ -133,7 +131,12 @@ function update_gigs(){
                         </tr>
                     `)
                 }
-
+                $("tr.gig").unbind()
+                $("tr.gig").click(function(){
+                    console.log($(this).data("oid"))
+                    console.log($(this).find("td").eq(4).text())
+                    ask_about_gig($(this).data("oid"),$(this).find("td").eq(4).text())
+                })
 
             },
             error: function(message) {
@@ -142,4 +145,31 @@ function update_gigs(){
         }
     )
 
+}
+
+function ask_about_gig(oid, current_answer) {
+    $("#submitanswer").data("oid", oid)
+    let al = $("#answerlist")
+    al.empty(); 
+
+    ["Unavailable","Maybe","Available"].forEach(
+        answer => {
+            let selected = ""
+            if (answer == current_answer) {
+                selected = "checked"
+            }
+            let classname = answer.toLowerCase()
+    
+            al.append(`
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="giganswerradio" id="giganswer${classname}" ${selected}>
+            <label class="form-check-label" for="giganswer${classname}">
+              ${answer}
+            </label>
+          </div>
+            `)
+        }
+    )
+
+    $("#answerdiv").modal("show")
 }

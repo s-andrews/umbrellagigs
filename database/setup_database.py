@@ -49,7 +49,11 @@ def main():
 
     regulars = []
 
-    for regular in regular_search:
+    for player in regular_search:
+        regular = {}
+        for x in ["_id","first_name","last_name","section","is_dep"]:
+            regular[x] = player[x]
+            
         regular["response"] = "No response"
         regulars.append(regular)
         

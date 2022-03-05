@@ -1,7 +1,8 @@
 const backend = "cgi-bin/umbrella_backend.py"
 var session = ""
 var is_admin = false
-var name = ""
+var person_id = ""
+var gigs = ""
 
 $( document ).ready(function() {
     show_login()
@@ -82,9 +83,9 @@ function show_login() {
                         return
                     }
                     let sections = session_string.split("\t")
-                    name = sections[0].substring(9)
-                    $("#loginname").text(name)
-                    is_admin = sections[1] == "True"
+                    $("#loginname").text(sections[0].substring(9))
+                    person_id = sections[1]
+                    is_admin = sections[2] == "True"
                     // TODO: Make isadmin class visible
                     $("#logindiv").modal("hide")
                     $("#maincontent").show()
@@ -157,7 +158,9 @@ function update_gigs(){
                 action: "list_gigs",
                 session: session
             },
-            success: function(gigs) {
+            success: function(gigs_json) {
+
+                gigs = gigs_json
 
                 $("#gigtablebody").empty()
 
@@ -166,13 +169,21 @@ function update_gigs(){
                 for (let g in gigs) {
                     let gig = gigs[g]
 
+                    let response = "Unknown"
+
+                    for (let player of gig["players"]) {
+                        if (player["_id"]["$oid"] == person_id) {
+                            response = player["response"]
+                        }
+                    }
+
                     t.append(`
                         <tr class="gig ${gig.confirmed}" data-oid="${gig._id.$oid}">
                             <td>${gig.date}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
                             <td>${gig.start_time} - ${gig.end_time}</td>
-                            <td>Unknown</td>
+                            <td>${response}</td>
                         </tr>
                     `)
                 }

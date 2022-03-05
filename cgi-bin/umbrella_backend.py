@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from distutils.sysconfig import get_makefile_filename
 import bcrypt
 import random
 from pymongo import MongoClient
@@ -86,9 +87,24 @@ def new_user(person,form):
 
 def list_gigs(person):
     gig_list = gigs.find({})
-    # TODO: Unless they're an admin only send them the details of their
-    # own registration
-    send_json(gig_list)
+
+    relevant_gigs = []
+
+    if person["is_admin"]:
+        relevant_gigs = gig_list
+
+    else:
+        for gig in gig_list:
+            players = []
+            for player in players:
+                if player["_id"] == person["_id"]:
+                    players.append(player)
+        
+            if players:
+                gig["players"] = players
+                relevant_gigs.append(gig)
+
+    send_json(relevant_gigs)
 
 
 def process_login (email,password):
@@ -110,7 +126,7 @@ def validate_session(sessioncode):
         send_response(False,"")
         return
     
-    send_response(True,person["first_name"]+" "+person["last_name"]+"\t"+str(person["is_admin"]))
+    send_response(True,person["first_name"]+" "+person["last_name"]+"\t"+str(person["_id"])+"\t"+str(person["is_admin"]))
 
 def checksession (sessioncode):
     person = people.find_one({"sessioncode":sessioncode})

@@ -8,6 +8,12 @@ $( document ).ready(function() {
 
     // Action when they log in
     $("#login").click(process_login)
+    // Also when they press return in the password field
+    $("#password").keypress(function(e){
+        if(e.keyCode == 13){
+            process_login();
+        }
+    });
 
     // Action when they log out
     $("#logoutbutton").click(logout)
@@ -17,7 +23,7 @@ $( document ).ready(function() {
 })
 
 function submit_answer() {
-    let oid = $("submitanswer").data("oid")
+    let oid = $("#submitanswer").data("oid")
     let answer = $('input[name=giganswerradio]:checked')
 
     if (answer.length == 0) {

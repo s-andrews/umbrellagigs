@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import bcrypt
 import random
-from pathlib import Path
 from pymongo import MongoClient
 from bson.json_util import dumps
-from datetime import date
+from bson.objectid import ObjectId
 import cgi
 import cgitb
 cgitb.enable()
@@ -39,6 +38,9 @@ def main():
         elif form["action"].value == "list_gigs":
             list_gigs(person)
 
+        elif form["action"].value == "answer_gig":
+            answer_gig(person,form["gig_id"].value,form["answer"].value)
+
 
 def send_response(success,message):
     if success:
@@ -48,6 +50,18 @@ def send_response(success,message):
 
 def send_json(data):
     print("Content-type: text/json; charset=utf-8\n\n"+dumps(data))
+
+
+def answer_gig(person,gig_oid,answer):
+    gig = gigs.find_one({"_id":ObjectId(gig_oid)})
+    for player in gig["players"]:
+        if player["_id"] == person["_id"]:
+            player["response"] = answer
+
+    gigs.update_one({"_id":ObjectId(gig_oid)},{"$set":{"players":gig["players"]}})
+
+
+    send_response(True,"")
 
 def new_user(person,form):
 

@@ -37,7 +37,10 @@ function submit_answer() {
 
     // We'll update the UI directly rather than waiting for the back
     // end to respond.
-    $("tr.gig[data-oid="+oid+"]").find("button.answer").text(answer)
+    let answerbutton = $("tr.gig[data-oid="+oid+"]").find("button.answer")
+    answerbutton.text(answer)
+    answerbutton.removeClass("btn-danger")
+    answerbutton.addClass("btn-primary")
 
 
     // We report the change in status to the backend
@@ -176,6 +179,7 @@ function update_gigs(){
                     let gig = gigs[g]
 
                     let response = "Unknown"
+                    let responseclass = "btn-primary"
 
                     for (let player of gig["players"]) {
                         if (player["_id"]["$oid"] == person_id) {
@@ -183,13 +187,18 @@ function update_gigs(){
                         }
                     }
 
+                    if (response == "No response") {
+                        responseclass = "btn-danger"
+                    }
+
                     t.append(`
                         <tr class="gig ${gig.confirmed}" data-oid="${gig._id.$oid}">
                             <td>${gig.date}</td>
+                            <td>${gig.confirmed}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
                             <td>${gig.start_time} - ${gig.end_time}</td>
-                            <td><button class="answer btn btn-primary">${response}</button></td>
+                            <td><button class="answer btn ${responseclass}">${response}</button></td>
                         </tr>
                     `)
                 }

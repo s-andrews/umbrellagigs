@@ -95,7 +95,7 @@ def list_gigs(person):
     else:
         for gig in gig_list:
             players = []
-            for player in players:
+            for player in gig["players"]:
                 if player["_id"] == person["_id"]:
                     players.append(player)
         

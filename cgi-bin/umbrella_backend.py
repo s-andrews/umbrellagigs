@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from distutils.sysconfig import get_makefile_filename
 import bcrypt
 import random
 from pymongo import MongoClient

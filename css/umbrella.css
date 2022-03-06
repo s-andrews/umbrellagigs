@@ -43,8 +43,7 @@ thead {
     color: white;
 }
 
-tr.gig:hover {
-    background-color: darkmagenta;
-    cursor: pointer;
+button.answer {
+    width: 100%;
 }
 

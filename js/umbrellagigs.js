@@ -34,6 +34,12 @@ function submit_answer() {
 
     answer = $("label[for='" + answer.attr('id') + "']").text().trim()
     
+
+    // We'll update the UI directly rather than waiting for the back
+    // end to respond.
+    $("tr.gig[data-oid="+oid+"]").find("button.answer").text(answer)
+
+
     // We report the change in status to the backend
     $.ajax(
         {
@@ -46,7 +52,7 @@ function submit_answer() {
                 answer: answer
             },
             success: function(gigs) {
-                update_gigs()
+                // Don't need to do anything as we updated the UI directly
             },
             error: function(message) {
                 console.log("Failed to update gig answer")
@@ -183,13 +189,13 @@ function update_gigs(){
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
                             <td>${gig.start_time} - ${gig.end_time}</td>
-                            <td>${response}</td>
+                            <td><button class="answer btn btn-primary">${response}</button></td>
                         </tr>
                     `)
                 }
-                $("tr.gig").unbind()
-                $("tr.gig").click(function(){
-                    ask_about_gig($(this).data("oid"),$(this).find("td").eq(4).text())
+                $(".answer").unbind()
+                $(".answer").click(function(){
+                    ask_about_gig($(this).parent().parent().data("oid"),$(this).find("td").eq(4).text())
                 })
 
             },

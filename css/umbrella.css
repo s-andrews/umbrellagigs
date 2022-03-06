@@ -19,17 +19,17 @@
     display: none
 }
 
-.unconfirmed {
+.Unconfirmed {
     background-color: grey;
     color: white;
 }
 
-.confirmed {
+.Confirmed {
     background-color: green;
     color: white;
 }
 
-.cancelled {
+.Cancelled {
     background-color: darkred;
     color: white;
 }

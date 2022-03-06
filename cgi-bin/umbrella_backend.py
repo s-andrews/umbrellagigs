@@ -41,6 +41,10 @@ def main():
         elif form["action"].value == "answer_gig":
             answer_gig(person,form["gig_id"].value,form["answer"].value)
 
+        elif form["action"].value == "change_status":
+            change_status(person,form["gig_id"].value,form["answer"].value)
+
+
 
 def send_response(success,message):
     if success:
@@ -62,6 +66,20 @@ def answer_gig(person,gig_oid,answer):
 
 
     send_response(True,"")
+
+
+def change_status(person,gig_oid,answer):
+
+    # This can only be run by admins
+    if not person["is_admin"]:
+        send_response(False,"Admin only action")
+        return
+
+    gig = gigs.update_one({"_id":ObjectId(gig_oid)},{"$set":{"confirmed":answer}})
+
+    send_response(True,"")
+
+
 
 def new_user(person,form):
 

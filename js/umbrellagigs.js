@@ -21,6 +21,11 @@ $( document ).ready(function() {
 
     // Action when they answer about a gig
     $("#submitanswer").click(submit_answer)
+
+    // Action when they change the status of a gig
+    $("#submitstatus").click(submit_status)
+
+
 })
 
 function submit_answer() {
@@ -67,6 +72,52 @@ function submit_answer() {
     $("#answerdiv").modal("hide")
 
 }
+
+function submit_status() {
+    let oid = $("#submitstatus").data("oid")
+    let answer = $('input[name=statusradio]:checked')
+
+    if (answer.length == 0) {
+        // They haven't answered
+        return
+    }
+
+    answer = $("label[for='" + answer.attr('id') + "']").text().trim()
+    
+    // We'll update the UI directly rather than waiting for the back
+    // end to respond.
+    let statusbutton = $("tr.gig[data-oid="+oid+"]").find("button.status")
+    statusbutton.text(answer)
+
+    // We report the change in status to the backend
+    $.ajax(
+        {
+            url: backend,
+            method: "POST",
+            data: {
+                action: "change_status",
+                session: session,
+                gig_id: oid,
+                answer: answer
+            },
+            success: function() {
+                // Don't need to do anything as we updated the UI directly
+            },
+            error: function(message) {
+                console.log("Failed to update gig status")
+                $("#gigtablebody").empty()
+            }
+        }
+    )
+
+    $("#statusdiv").modal("hide")
+    // We need to apply the change to the surrounding tr classes
+    let changetr = $("tr.gig[data-oid="+oid+"]")
+    changetr.removeClass("Unconfirmed Confirmed Cancelled")
+    changetr.addClass(answer)
+
+}
+
 
 
 function show_login() {
@@ -193,13 +244,16 @@ function update_gigs(){
 
                     if (is_admin) {
                         // We turn the status into a button so we can change it
-                        gig.confirmed = '<button class="btn btn-primary status">'+gig.confirmed+"</button>"
+                        gig.confirmedtext = '<button class="btn btn-primary status">'+gig.confirmed+"</button>"
+                    }
+                    else {
+                        gig.confirmedtext = gig.confirmed
                     }
 
                     t.append(`
                         <tr class="gig ${gig.confirmed}" data-oid="${gig._id.$oid}">
                             <td>${new Date(gig.date).toLocaleString("en-UK",{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</td>
-                            <td>${gig.confirmed}</td>
+                            <td>${gig.confirmedtext}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>
                             <td>${gig.start_time} - ${gig.end_time}</td>
@@ -209,7 +263,12 @@ function update_gigs(){
                 }
                 $(".answer").unbind()
                 $(".answer").click(function(){
-                    ask_about_gig($(this).parent().parent().data("oid"),$(this).find("td").eq(4).text())
+                    ask_about_gig($(this).parent().parent().data("oid"),$(this).text())
+                })
+
+                $("button.status").unbind()
+                $("button.status").click(function(){
+                    change_status($(this).parent().parent().data("oid"),$(this).text())
                 })
 
             },
@@ -246,4 +305,32 @@ function ask_about_gig(oid, current_answer) {
     )
 
     $("#answerdiv").modal("show")
+}
+
+
+function change_status(oid, current_answer) {
+    $("#submitstatus").data("oid", oid)
+    let al = $("#statuslist")
+    al.empty(); 
+
+    ["Confirmed","Unconfirmed","Cancelled"].forEach(
+        answer => {
+            let selected = ""
+            if (answer == current_answer) {
+                selected = "checked"
+            }
+            let classname = answer.toLowerCase()
+    
+            al.append(`
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="statusradio" id="statusanswer${classname}" ${selected}>
+            <label class="form-check-label" for="statusanswer${classname}">
+              ${answer}
+            </label>
+          </div>
+            `)
+        }
+    )
+
+    $("#statusdiv").modal("show")
 }

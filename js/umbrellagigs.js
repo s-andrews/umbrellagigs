@@ -214,12 +214,17 @@ function logout() {
     Cookies.remove("umbrella_session_id")
     $("#gigtablebody").empty()
     $("#maincontent").hide()
+    $("#email").val("")
+    $("#password").val("")
     $("#logindiv").modal("show")
 }
 
 function process_login() {
-    email = $("#email").val()
-    password = $("#password").val()
+    let email = $("#email").val()
+    let password = $("#password").val()
+
+    // Clear their password as soon as we've read it
+    $("#password").val("")
 
     $.ajax(
         {

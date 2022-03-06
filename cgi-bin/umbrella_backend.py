@@ -44,6 +44,9 @@ def main():
         elif form["action"].value == "change_status":
             change_status(person,form["gig_id"].value,form["answer"].value)
 
+        elif form["action"].value == "delete_gig":
+            delete_gig(person,form["gig_id"].value)
+
 
 
 def send_response(success,message):
@@ -79,6 +82,16 @@ def change_status(person,gig_oid,answer):
 
     send_response(True,"")
 
+def delete_gig(person,gig_oid):
+
+    # This can only be run by admins
+    if not person["is_admin"]:
+        send_response(False,"Admin only action")
+        return
+
+    gigs.delete_one({"_id":ObjectId(gig_oid)})
+
+    send_response(True,"")
 
 
 def new_user(person,form):

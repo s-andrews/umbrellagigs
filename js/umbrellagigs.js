@@ -25,6 +25,9 @@ $( document ).ready(function() {
     // Action when they change the status of a gig
     $("#submitstatus").click(submit_status)
 
+    // Action when they delete a gig
+    $("#deletegig").click(delete_gig)
+
 
 })
 
@@ -115,6 +118,46 @@ function submit_status() {
     let changetr = $("tr.gig[data-oid="+oid+"]")
     changetr.removeClass("Unconfirmed Confirmed Cancelled")
     changetr.addClass(answer)
+
+}
+
+
+function delete_gig() {
+
+    let reallydelete = confirm("Do you really want to delete this gig?")
+
+    if (!reallydelete) {
+        $("#statusdiv").modal("hide")
+        return
+    }
+
+    let oid = $("#submitstatus").data("oid")
+    
+    // We'll update the UI directly rather than waiting for the back
+    // end to respond.
+    $("tr.gig[data-oid="+oid+"]").remove()
+
+    // We report the change in status to the backend
+    $.ajax(
+        {
+            url: backend,
+            method: "POST",
+            data: {
+                action: "delete_gig",
+                session: session,
+                gig_id: oid
+            },
+            success: function() {
+                // Don't need to do anything as we updated the UI directly
+            },
+            error: function(message) {
+                console.log("Failed to delete gig")
+                $("#gigtablebody").empty()
+            }
+        }
+    )
+
+    $("#statusdiv").modal("hide")
 
 }
 

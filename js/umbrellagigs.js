@@ -191,9 +191,14 @@ function update_gigs(){
                         responseclass = "btn-danger"
                     }
 
+                    if (is_admin) {
+                        // We turn the status into a button so we can change it
+                        gig.confirmed = '<button class="btn btn-primary status">'+gig.confirmed+"</button>"
+                    }
+
                     t.append(`
                         <tr class="gig ${gig.confirmed}" data-oid="${gig._id.$oid}">
-                            <td>${gig.date}</td>
+                            <td>${new Date(gig.date).toLocaleString("en-UK",{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</td>
                             <td>${gig.confirmed}</td>
                             <td>${gig.name}</td>
                             <td>${gig.location}</td>

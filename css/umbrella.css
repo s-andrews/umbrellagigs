@@ -43,7 +43,7 @@ thead {
     color: white;
 }
 
-button.answer {
+button.answer,button.status {
     width: 100%;
 }
 

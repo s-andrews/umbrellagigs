@@ -189,7 +189,7 @@ function show_login() {
                     $("#loginname").text(sections[0].substring(9))
                     person_id = sections[1]
                     is_admin = sections[2] == "True"
-                    // TODO: Make isadmin class visible
+                    $(".adminonly").show()
                     $("#logindiv").modal("hide")
                     $("#maincontent").show()
     
@@ -309,6 +309,17 @@ function update_gigs(){
                         </tr>
                     `)
                 }
+
+                // Admins have stuff happen when they click on a gig row
+                if (is_admin) {
+                    $("tr.gig").unbind()
+                    $("tr.gig").click(function(){
+                            show_attendees($(this).data("oid"),$(this).text())
+                        }
+                    )
+                    $("tr.gig").css("cursor","pointer")
+                }
+
                 $(".answer").unbind()
                 $(".answer").click(function(){
                     ask_about_gig($(this).parent().parent().data("oid"),$(this).text())
@@ -325,8 +336,39 @@ function update_gigs(){
             }
         }
     )
-
 }
+
+
+function show_attendees (oid) {
+    console.log("Showing attendees for "+oid)
+    for (let i in gigs) {
+        if (gigs[i]["_id"]["$oid"] == oid) {
+
+            let t = $('#attendeestablebody')
+            t.empty()
+
+            for (let p in gigs[i]["players"]) {
+                let player = gigs[i]["players"][p]
+
+                t.append(`
+                <tr class="attendee" data-oid="${player._id.$oid}">
+                    <td>${player.first_name} ${player.last_name}</td>
+                    <td>${player.section}</td>
+                    <td>${player.response}</td>
+                </tr>
+                `)
+            }
+
+
+            // $(".answer").unbind()
+            // $(".answer").click(function(){
+            //     ask_about_gig($(this).parent().parent().data("oid"),$(this).text())
+            // })
+            
+        }
+    }
+}
+
 
 function ask_about_gig(oid, current_answer) {
     $("#submitanswer").data("oid", oid)
